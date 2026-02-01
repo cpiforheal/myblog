@@ -57,28 +57,46 @@ export default {
       },
       spacing: {
         '18': '4.5rem',
+        '22': '5.5rem',
         '88': '22rem',
         '128': '32rem',
+        // Apple-style generous spacing
+        '15': '3.75rem',
+        '30': '7.5rem',
+        '36': '9rem',
       },
       borderRadius: {
         'xl': '0.75rem',
         '2xl': '1rem',
         '3xl': '1.5rem',
+        '4xl': '2rem',
       },
       boxShadow: {
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
-        'soft-dark': '0 2px 15px -3px rgba(0, 0, 0, 0.25), 0 10px 20px -2px rgba(0, 0, 0, 0.15)',
+        // Much softer, Apple-style shadows
+        'apple-xs': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        'apple-sm': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        'apple': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        'apple-md': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'apple-lg': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'apple-xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        // Glass effects - more subtle
+        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
+        // Hover lift shadows
+        'lift': '0 8px 25px -8px rgba(0, 0, 0, 0.15)',
+        'lift-dark': '0 8px 25px -8px rgba(0, 0, 0, 0.4)',
       },
       backdropBlur: {
         'xs': '2px',
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'scale-in': 'scaleIn 0.2s ease-out',
+        'fade-in': 'fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-up': 'slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        'slide-down': 'slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        'scale-in': 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         'float': 'float 6s ease-in-out infinite',
+        'bounce-gentle': 'bounceGentle 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+        'pulse-gentle': 'pulseGentle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
         fadeIn: {
@@ -86,7 +104,11 @@ export default {
           '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '0%': { transform: 'translateY(16px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-16px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
         scaleIn: {
@@ -95,8 +117,21 @@ export default {
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
+          '50%': { transform: 'translateY(-8px)' },
         },
+        bounceGentle: {
+          '0%': { transform: 'scale(0.95)' },
+          '50%': { transform: 'scale(1.02)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        pulseGentle: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' },
+        },
+      },
+      transitionTimingFunction: {
+        'apple': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'apple-spring': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
     },
   },
