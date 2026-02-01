@@ -48,11 +48,27 @@ export interface UserProfile {
 
 // 社交链接类型
 export interface SocialLinks {
-  github?: string;
   twitter?: string;
   instagram?: string;
   email?: string;
   website?: string;
+}
+
+// 标签类型
+export interface Tag {
+  id: string;
+  name: string;
+  color?: string;
+  category?: 'skill' | 'interest' | 'hobby';
+}
+
+// 时间线项目类型
+export interface TimelineItem {
+  id: string;
+  title: string;
+  time: string;
+  type: 'post' | 'photo' | 'milestone';
+  description?: string;
 }
 
 // 用户统计类型

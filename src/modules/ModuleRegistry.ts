@@ -6,6 +6,7 @@ export interface HomeModule {
   name: string;
   component: React.ComponentType<any>;
   props?: Record<string, any>;
+  area?: 'hero-sidebar' | 'hero-main' | 'site';
   gridArea?: {
     colSpan?: number;
     rowSpan?: number;
@@ -37,13 +38,10 @@ class ModuleRegistry {
       .sort((a, b) => (b.priority || 0) - (a.priority || 0));
   }
 
-  getModulesByArea(area: 'hero' | 'main' | 'sidebar'): HomeModule[] {
+  getModulesByArea(area: 'hero-sidebar' | 'hero-main' | 'site'): HomeModule[] {
     return this.getAllModules().filter(module => {
-      // 根据模块配置决定显示区域
-      if (area === 'hero' && module.id === 'hero') return true;
-      if (area === 'sidebar' && module.gridArea?.colSpan === 1) return true;
-      if (area === 'main' && module.id !== 'hero' && module.gridArea?.colSpan !== 1) return true;
-      return false;
+      // 使用新的 area 属性来决定显示区域
+      return module.area === area;
     });
   }
 
@@ -77,7 +75,7 @@ export function useHomeModules() {
 
   return {
     modules,
-    getModulesByArea: (area: 'hero' | 'main' | 'sidebar') =>
+    getModulesByArea: (area: 'hero-sidebar' | 'hero-main' | 'site') =>
       moduleRegistry.getModulesByArea(area),
     updateModule: (moduleId: string, updates: Partial<HomeModule>) => {
       moduleRegistry.updateModule(moduleId, updates);

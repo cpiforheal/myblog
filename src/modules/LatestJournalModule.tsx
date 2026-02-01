@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/Button';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { BookOpen, Clock, MapPin, ArrowRight } from 'lucide-react';
+import { getOptimizedAnimationConfig } from '@/utils/performance';
 
 interface LatestJournalModuleProps {
   title?: string;
@@ -15,7 +16,7 @@ interface LatestJournalModuleProps {
   onReadMore?: () => void;
 }
 
-export function LatestJournalModule({
+export const LatestJournalModule = memo(function LatestJournalModule({
   title = "关于慢生活的思考",
   category = "生活感悟",
   excerpt = "在这个快节奏的时代，我们总是被各种事务推着向前跑，很少有时间停下来思考生活的意义。今天在公园里看到一位老人悠闲地喂鸽子，突然意识到...",
@@ -24,6 +25,26 @@ export function LatestJournalModule({
   publishedAt = "2 小时前",
   onReadMore
 }: LatestJournalModuleProps) {
+  const animationConfig = getOptimizedAnimationConfig();
+
+  // 缓存动画配置
+  const iconHoverAnimation = useMemo(() => ({
+    scale: 1.05,
+    rotate: 5,
+    transition: { duration: animationConfig.duration, ease: [0.4, 0, 0.2, 1] }
+  }), [animationConfig.duration]);
+
+  const contentHoverAnimation = useMemo(() => ({
+    initial: { opacity: 0.8 },
+    whileHover: { opacity: 1 },
+    transition: { duration: animationConfig.duration }
+  }), [animationConfig.duration]);
+
+  // 使用 useCallback 优化事件处理器
+  const handleReadMore = useCallback(() => {
+    onReadMore?.();
+  }, [onReadMore]);
+
   return (
     <ScrollReveal delay={0.1}>
       <GlassCard hover className="h-full group">
@@ -31,8 +52,7 @@ export function LatestJournalModule({
           <div className="flex items-center gap-4">
             <motion.div
               className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-apple"
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              whileHover={iconHoverAnimation}
             >
               <BookOpen size={22} className="text-white" />
             </motion.div>
@@ -50,11 +70,7 @@ export function LatestJournalModule({
           </span>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0.8 }}
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-        >
+        <motion.div {...contentHoverAnimation}>
           <h4 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
             {title}
           </h4>
@@ -77,7 +93,7 @@ export function LatestJournalModule({
           <Button
             variant="ghost"
             size="sm"
-            onClick={onReadMore}
+            onClick={handleReadMore}
             icon={<ArrowRight size={16} />}
             iconPosition="right"
             className="group-hover:bg-blue-50 dark:group-hover:bg-blue-900/20 group-hover:text-blue-600 dark:group-hover:text-blue-400"
@@ -88,4 +104,4 @@ export function LatestJournalModule({
       </GlassCard>
     </ScrollReveal>
   );
-}
+});

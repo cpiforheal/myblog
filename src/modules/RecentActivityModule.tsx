@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { Heart, FileText, Camera, Trophy, Clock } from 'lucide-react';
+import { getOptimizedAnimationConfig } from '@/utils/performance';
 
 interface Activity {
   id: string;
@@ -16,7 +17,7 @@ interface RecentActivityModuleProps {
   activities?: Activity[];
 }
 
-export function RecentActivityModule({
+export const RecentActivityModule = memo(function RecentActivityModule({
   activities = [
     {
       id: '1',
@@ -48,7 +49,10 @@ export function RecentActivityModule({
     }
   ]
 }: RecentActivityModuleProps) {
-  const getActivityIcon = (type: Activity['type']) => {
+  const animationConfig = getOptimizedAnimationConfig();
+
+  // 缓存图标映射
+  const getActivityIcon = useCallback((type: Activity['type']) => {
     switch (type) {
       case 'post':
         return { icon: FileText, color: 'from-blue-500 to-blue-600' };
@@ -61,7 +65,24 @@ export function RecentActivityModule({
       default:
         return { icon: Heart, color: 'from-pink-500 to-pink-600' };
     }
-  };
+  }, []);
+
+  // 缓存动画配置
+  const iconHoverAnimation = useMemo(() => ({
+    scale: 1.05,
+    rotate: -5,
+    transition: { duration: animationConfig.duration, ease: [0.4, 0, 0.2, 1] }
+  }), [animationConfig.duration]);
+
+  const itemHoverAnimation = useMemo(() => ({
+    scale: 1.02,
+    x: 4,
+    transition: { duration: animationConfig.duration }
+  }), [animationConfig.duration]);
+
+  const itemTapAnimation = useMemo(() => ({
+    scale: 0.98
+  }), []);
 
   return (
     <ScrollReveal delay={0.4}>
@@ -69,8 +90,7 @@ export function RecentActivityModule({
         <div className="flex items-center gap-4 mb-6">
           <motion.div
             className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-apple"
-            whileHover={{ scale: 1.05, rotate: -5 }}
-            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            whileHover={iconHoverAnimation}
           >
             <Heart size={22} className="text-white" />
           </motion.div>
@@ -90,15 +110,15 @@ export function RecentActivityModule({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
-                  duration: 0.5,
-                  delay: 0.1 * index,
+                  duration: animationConfig.duration * 2.5,
+                  delay: animationConfig.stagger * index,
                   ease: [0.4, 0, 0.2, 1]
                 }}
               >
                 <motion.div
                   className="flex items-start gap-4 p-4 rounded-2xl bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-100/50 dark:hover:bg-gray-700/30 transition-all duration-300 cursor-pointer"
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={itemHoverAnimation}
+                  whileTap={itemTapAnimation}
                 >
                   <div className={`w-10 h-10 bg-gradient-to-br ${color} rounded-xl flex items-center justify-center shadow-apple-xs flex-shrink-0 group-hover:shadow-apple transition-shadow duration-300`}>
                     <Icon size={18} className="text-white" />
@@ -149,7 +169,7 @@ export function RecentActivityModule({
           className="mt-6 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
+          transition={{ duration: animationConfig.duration * 2.5, delay: 0.6 }}
         >
           <p className="text-xs text-gray-400 dark:text-gray-500">
             持续更新中...
@@ -158,4 +178,4 @@ export function RecentActivityModule({
       </GlassCard>
     </ScrollReveal>
   );
-}
+});

@@ -1,36 +1,65 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 
 interface UseScrollAnimationOptions {
   threshold?: number;
   rootMargin?: string;
   triggerOnce?: boolean;
+  delay?: number;
 }
+
+// 全局 IntersectionObserver 实例缓存
+const observerCache = new Map<string, IntersectionObserver>();
 
 export function useScrollAnimation({
   threshold = 0.1,
   rootMargin = '0px 0px -50px 0px',
-  triggerOnce = true
+  triggerOnce = true,
+  delay = 0
 }: UseScrollAnimationOptions = {}) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  // 创建观察器配置的缓存键
+  const observerKey = useMemo(() =>
+    `${threshold}-${rootMargin}-${triggerOnce}`,
+    [threshold, rootMargin, triggerOnce]
+  );
+
+  // 优化的回调函数，使用 useCallback 避免重复创建
+  const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
+    const [entry] = entries;
+    if (entry.isIntersecting) {
+      if (delay > 0) {
+        timeoutRef.current = setTimeout(() => {
+          setIsVisible(true);
+        }, delay);
+      } else {
+        setIsVisible(true);
+      }
+
+      if (triggerOnce && ref.current) {
+        const observer = observerCache.get(observerKey);
+        observer?.unobserve(ref.current);
+      }
+    } else if (!triggerOnce) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      setIsVisible(false);
+    }
+  }, [delay, triggerOnce, observerKey]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (triggerOnce && ref.current) {
-            observer.unobserve(ref.current);
-          }
-        } else if (!triggerOnce) {
-          setIsVisible(false);
-        }
-      },
-      {
+    // 复用或创建 IntersectionObserver
+    let observer = observerCache.get(observerKey);
+    if (!observer) {
+      observer = new IntersectionObserver(handleIntersection, {
         threshold,
         rootMargin,
-      }
-    );
+      });
+      observerCache.set(observerKey, observer);
+    }
 
     const currentRef = ref.current;
     if (currentRef) {
@@ -38,11 +67,14 @@ export function useScrollAnimation({
     }
 
     return () => {
-      if (currentRef) {
+      if (currentRef && observer) {
         observer.unobserve(currentRef);
       }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [threshold, rootMargin, triggerOnce]);
+  }, [observerKey, handleIntersection, threshold, rootMargin]);
 
   return { ref, isVisible };
 }

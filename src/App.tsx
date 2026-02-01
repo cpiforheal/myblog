@@ -1,28 +1,34 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from '@/hooks/useTheme';
 import { Header } from '@/components/layout/Header';
 import { BottomNav } from '@/components/layout/BottomNav';
-import { HomePage } from '@/pages/HomePage';
-import { JournalPage } from '@/pages/JournalPage';
-import { GalleryPage } from '@/pages/GalleryPage';
-import { AboutPage } from '@/pages/AboutPage';
+import { AppRoutes, preloadAllRoutes } from './router/AppRoutes';
+import { PerformanceMonitor } from './components/ui/PerformanceMonitor';
 
 function App() {
+  // 预加载路由
+  useEffect(() => {
+    // 在组件挂载后预加载其他路由
+    const timer = setTimeout(() => {
+      preloadAllRoutes();
+    }, 2000); // 2秒后开始预加载
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <ThemeProvider>
       <Router>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           <Header />
           <main className="pb-16 md:pb-0">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/journal" element={<JournalPage />} />
-              <Route path="/gallery" element={<GalleryPage />} />
-              <Route path="/about" element={<AboutPage />} />
-            </Routes>
+            <AppRoutes />
           </main>
           <BottomNav />
+
+          {/* 开发环境性能监控 */}
+          <PerformanceMonitor />
         </div>
       </Router>
     </ThemeProvider>
