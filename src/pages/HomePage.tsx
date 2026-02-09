@@ -4,7 +4,7 @@ import { registerHomeModules } from '@/modules';
 import { HeroSidebar } from '@/components/layout/HeroSidebar';
 import { HeroMainPanel } from '@/components/layout/HeroMainPanel';
 
-export default function HomePage() {
+export function HomePage() {
   const { getModulesByArea } = useHomeModules();
 
   // 注册模块

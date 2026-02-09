@@ -111,7 +111,7 @@ export const RecentActivityModule = memo(function RecentActivityModule({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
                   duration: animationConfig.duration * 2.5,
-                  delay: animationConfig.staggerDelay * index,
+                  delay: animationConfig.stagger * index,
                   ease: [0.4, 0, 0.2, 1]
                 }}
               >

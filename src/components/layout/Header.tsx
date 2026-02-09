@@ -1,16 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Newspaper, Camera, User, MessageSquare } from 'lucide-react';
+import { Home, BookOpen, Camera, User } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { cn } from '@/utils/cn';
 
 const navigation = [
   { name: '首页', href: '/', icon: Home },
-  { name: '博客', href: '/blog', icon: Newspaper },
   { name: '日记', href: '/journal', icon: BookOpen },
   { name: '相册', href: '/gallery', icon: Camera },
-  { name: '留言', href: '/guestbook', icon: MessageSquare },
   { name: '关于', href: '/about', icon: User },
 ];
 
