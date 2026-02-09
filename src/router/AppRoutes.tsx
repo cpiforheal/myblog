@@ -5,9 +5,11 @@ import { getOptimizedAnimationConfig } from '../utils/performance';
 
 // 懒加载页面组件
 const Home = lazy(() => import('../pages/HomePage'));
+const Blog = lazy(() => import('../pages/BlogPage'));
 const Diary = lazy(() => import('../pages/JournalPage'));
 const Gallery = lazy(() => import('../pages/GalleryPage'));
 const About = lazy(() => import('../pages/AboutPage'));
+const Guestbook = lazy(() => import('../pages/GuestbookPage'));
 
 // 加载中组件
 const LoadingSpinner = () => {
@@ -141,6 +143,16 @@ export const AppRoutes = () => {
           }
         />
         <Route
+          path="/blog"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <PageTransition>
+                <Blog />
+              </PageTransition>
+            </Suspense>
+          }
+        />
+        <Route
           path="/journal"
           element={
             <Suspense fallback={<LoadingSpinner />}>
@@ -166,6 +178,16 @@ export const AppRoutes = () => {
             <Suspense fallback={<LoadingSpinner />}>
               <PageTransition>
                 <About />
+              </PageTransition>
+            </Suspense>
+          }
+        />
+        <Route
+          path="/guestbook"
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <PageTransition>
+                <Guestbook />
               </PageTransition>
             </Suspense>
           }
@@ -217,7 +239,9 @@ export const preloadRoute = (routeImport: () => Promise<any>) => {
 
 // 预加载所有路由
 export const preloadAllRoutes = () => {
+  preloadRoute(() => import('../pages/BlogPage'));
   preloadRoute(() => import('../pages/JournalPage'));
   preloadRoute(() => import('../pages/GalleryPage'));
   preloadRoute(() => import('../pages/AboutPage'));
+  preloadRoute(() => import('../pages/GuestbookPage'));
 };

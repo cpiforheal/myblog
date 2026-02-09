@@ -79,7 +79,7 @@ export const GalleryPreviewModule = memo(function GalleryPreviewModule({
               animate={{ opacity: 1, scale: 1 }}
               transition={{
                 duration: animationConfig.duration * 2.5,
-                delay: animationConfig.stagger * index,
+                delay: animationConfig.staggerDelay * index,
                 ease: [0.4, 0, 0.2, 1]
               }}
               whileHover={photoHoverAnimation}

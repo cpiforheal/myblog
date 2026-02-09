@@ -1,9 +1,8 @@
 import { moduleRegistry, HomeModule } from './ModuleRegistry';
-import { HeroModule } from './HeroModule';
 import { LatestJournalModule } from './LatestJournalModule';
 import { StatsModule } from './StatsModule';
 import { GalleryPreviewModule } from './GalleryPreviewModule';
-import { RecentActivityModule } from './RecentActivityModule';
+import { GuestbookPreviewModule } from './GuestbookPreviewModule';
 
 // 注册所有首页模块
 export function registerHomeModules() {
@@ -21,8 +20,8 @@ export function registerHomeModules() {
       location: '北京',
       publishedAt: '2 小时前',
       onReadMore: () => {
-        // 导航到日记页面
-        window.location.href = '/journal';
+        // 导航到博客页面
+        window.location.href = '/blog';
       }
     },
     priority: 90,
@@ -73,6 +72,18 @@ export function registerHomeModules() {
   moduleRegistry.register(latestJournalModule);
   moduleRegistry.register(statsModule);
   moduleRegistry.register(galleryPreviewModule);
+
+  // 留言墙预览模块 - 作为站点功能卡片
+  const guestbookPreviewModule: HomeModule = {
+    id: 'guestbook-preview',
+    name: 'Guestbook Preview',
+    component: GuestbookPreviewModule,
+    area: 'site',
+    props: {},
+    priority: 60,
+    enabled: true,
+  };
+  moduleRegistry.register(guestbookPreviewModule);
 }
 
 // 模块配置工具函数
@@ -91,8 +102,8 @@ export function toggleModule(moduleId: string, enabled: boolean) {
 // 预设配置
 export const MODULE_PRESETS = {
   minimal: ['latest-journal', 'stats'],
-  full: ['latest-journal', 'stats', 'gallery-preview'],
-  creative: ['gallery-preview', 'latest-journal'],
+  full: ['latest-journal', 'stats', 'gallery-preview', 'guestbook-preview'],
+  creative: ['gallery-preview', 'latest-journal', 'guestbook-preview'],
   professional: ['stats', 'latest-journal']
 };
 
